@@ -72,7 +72,7 @@ public class FremeAGROVOC extends Service {
 			return null;
 		}
 	    
-	    System.out.println(responseStrBuilder);
+	    //System.out.println(responseStrBuilder);
 	    
 	    switch (responseCode) {
 			case 200:

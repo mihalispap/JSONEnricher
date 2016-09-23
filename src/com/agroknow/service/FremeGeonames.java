@@ -25,9 +25,11 @@ import org.openrdf.query.BindingSet;
 import javax.net.ssl.*;
 
 import com.agroknow.utils.Annotation;
+import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -47,7 +49,8 @@ public class FremeGeonames extends Service {
 
 	public ArrayList<Annotation> run(String input, String language) throws Exception
 	{
- 
+		if(input.isEmpty() || input.equals(" "))
+			return null;
 		
 		/*
 	     *  fix for
@@ -138,6 +141,7 @@ public class FremeGeonames extends Service {
 			streamReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
+			System.out.println("Input was:"+input);
 			e1.printStackTrace();
 			return null;
 		} 
@@ -194,7 +198,30 @@ public class FremeGeonames extends Service {
 	        	annotation.value=qs.getLiteral("value").getString();	        	
 	        	annotations.add(annotation);
 	        	
-	        	System.out.println(annotation.toString());
+	        	String dbpedia_sparql=""
+	        			+ "prefix owl: <http://www.w3.org/2002/07/owl#>"
+	        			+ "select ?geouri where {<"+annotation.uri+"> owl:sameAs ?geouri."
+	        			+ "filter( regex(str(?geouri), \"http://sws.geonames.org\" ))"
+	        					+ "} "
+	        			+ "limit 5";
+	        	QueryExecution qExe = QueryExecutionFactory
+	        			.sparqlService( "http://dbpedia.org/sparql", dbpedia_sparql );
+	        	ResultSet results_dbpedia = qExe.execSelect();
+	        	while(results_dbpedia.hasNext())
+	    	    {
+	    	        QuerySolution sol = results_dbpedia.nextSolution();
+	    	        RDFNode str = sol.get("geouri"); 
+
+	    	        Annotation annotation_n = new Annotation();	        	
+	    	        annotation_n.score=qs.getLiteral("cs").getFloat();
+	    	        annotation_n.vocabulary="geonames";
+	    	        annotation_n.uri=str.toString();
+	    	        annotation_n.value=qs.getLiteral("value").getString();	        	
+		        	annotations.add(annotation_n);
+	    	        
+	    	        System.out.println(annotation_n.toString());
+	    	    }
+	        	//System.out.println(annotation.toString());
 	        	//System.out.println(qs.getResource("ref").toString());
 	        }
 	   		

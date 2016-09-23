@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -32,9 +33,192 @@ import com.optimaize.langdetect.text.CommonTextObjectFactories;
 import com.optimaize.langdetect.text.TextObject;
 import com.optimaize.langdetect.text.TextObjectFactory;
 
+import javassist.bytecode.Descriptor.Iterator;
+
 public class AKJSONWriter 
 {
 	private String to_write="";
+	
+	public String map(String key)
+	{
+		/*
+		 * 
+			dct:language
+			dct:title
+			bibo:pageStart
+			dc:subject
+			bibo:pageEnd
+			dct:type
+			rdf:about
+			dct:identifier
+			dct:source
+			dct:isPartOf
+			dct:issued
+			dct:dateSubmitted
+			dct:creator
+			dct:description
+			dct:subject
+			bibo:authorList
+			bibo:issue
+			bibo:abstract
+		 * 
+		 * */
+		if(key.equals("dct:language"))
+			return "language";
+		if(key.equals("dct:title"))
+			return "title";
+		if(key.equals("bibo:pageStart"))
+			return "page_start";
+		if(key.equals("dc:subject"))
+			return "subject";
+		if(key.equals("bibo:pageEnd"))
+			return "page_end";
+		if(key.equals("dct:type"))
+			return "type";
+		if(key.equals("rdf:about"))
+			return "uri";
+		if(key.equals("dct:identifier"))
+			return "arn";
+		if(key.equals("dct:source"))
+			return "source";
+		if(key.equals("dct:isPartOf"))
+			return "is_part_of";
+		if(key.equals("dct:issued"))
+			return "date_issued";
+		if(key.equals("dct:dateSubmitted"))
+			return "date_submitted";
+		if(key.equals("dct:creator"))
+			return "author";
+		if(key.equals("dct:description"))
+			return "description";
+		if(key.equals("dct:subject"))
+			return "subject";
+		if(key.equals("bibo:authorList"))
+			return "authors";
+		if(key.equals("bibo:issue"))
+			return "issue";
+		if(key.equals("bibo:abstract"))
+			return "abstract";
+		if(key.equals("bibo:Journal"))
+			return "journal";
+		if(key.equals("foaf:name"))
+			return "name";
+		if(key.equals("foaf:Person"))
+			return "person";
+		if(key.equals("bibo:ISSN"))
+			return "issn";
+		if(key.equals("content"))
+			return "value";
+		if(key.equals("xml:lang"))
+			return "language";
+		if(key.equals("rdf:resource"))
+			return "uri";
+		if(key.equals("bibo:volume"))
+			return "volume";
+		if(key.equals("foaf:Organization"))
+			return "organization";
+		
+		return "field:"+key;
+	}
+	
+	public boolean isSpecialCase(String key)
+	{
+		if(key.equals("bibo:authorList") || key.equals("dct:subject"))
+			return true;
+		return false;
+	}
+	
+	public void handleJSONArray(JSONArray json, String key)
+	{
+		String mapped=map(key);
+		
+		to_write+="\""+mapped+"\":[\n\t\t";
+		
+			for(int i=0;i<json.size();i++)
+			{
+				if(json.get(i).getClass().equals(org.json.simple.JSONArray.class))
+				{
+					System.out.println("What to do?");
+				}
+				else if(json.get(i).getClass().equals(org.json.simple.JSONObject.class))
+				{
+					handleJSONObject((JSONObject) json.get(i),"plain");					
+				}
+				else
+				{
+					//System.out.println(json.get(i).getClass()+", "+mapped+", "
+    				//		+json.get(i).toString());
+					handlePlainValue(json.get(i), "plain");
+				}
+			}
+		
+		to_write+="],\n\t";
+	}
+	
+	public void handleJSONObject(JSONObject json, String key)
+	{
+		String mapped=map(key);
+		
+		if(!key.equals("plain"))
+			to_write+="\""+mapped+"\":\n\t\t{";
+		else
+			to_write+="{\n\t\t";
+		
+			Set<String> elements = json.keySet();		        	
+		    java.util.Iterator<String> it=elements.iterator();
+		    while (it.hasNext()) 
+		    {
+		    	String key_inner=it.next();
+		        //System.out.println(key+"|"+objectInArray.get(key).getClass());
+		      		
+		    	if(json.get(key_inner).getClass().equals(org.json.simple.JSONArray.class))
+		    	{
+		    		handleJSONArray((JSONArray)json.get(key_inner), key_inner);
+		    	}
+		    	else if(json.get(key_inner).getClass().equals(org.json.simple.JSONObject.class))
+		    	{
+		    		handleJSONObject((JSONObject)json.get(key_inner), key_inner);
+		    	}
+		    	else
+		    	{
+		    		handlePlainValue(json.get(key_inner), key_inner);
+		    	}
+		    }	
+		to_write+="},\n\t";
+	}
+	
+	public void handlePlainValue(Object value, String key)
+	{
+		String mapped = map(key);
+		
+		if(!key.equals("plain"))
+			to_write+="\""+mapped+"\":";
+		
+		try
+		{
+			float v = Float.parseFloat(value.toString());
+			
+			double x = v - Math.floor(v);
+			
+			if(x == 0.0f)
+				to_write+=(int)(Math.floor(v));
+			else
+				to_write+=v;
+			
+			//to_write+=Float.parseFloat(value.toString());
+		}
+		catch(NumberFormatException e)
+		{
+			to_write+="\""+value+"\"";
+		}
+		
+		/*if(value instanceof Number)
+			to_write+=value;
+		else
+			to_write+="\""+value+"\"";*/
+				
+		to_write+=",\n\t";
+	}
 	
 	public void writeAnnotations(ArrayList<Annotation> annotations, String output_folder) throws ParseException, FileNotFoundException, UnsupportedEncodingException
 	{
@@ -88,6 +272,8 @@ public class AKJSONWriter
 		
 		
 	}
+	
+	
 	public void writeCore(String output_folder, String jsonfile) throws ParseException, FileNotFoundException, UnsupportedEncodingException
 	{
 		String contents="";
@@ -113,6 +299,66 @@ public class AKJSONWriter
         {
         	json_a.add(((JSONObject)json.get("rdf:RDF")).get("bibo:Article"));
         }
+        
+        for(int i=0;i<json_a.size();i++)
+        {   
+        	String id=((JSONObject)json_a.get(i)).get("dct:identifier").toString();
+        	PrintWriter writer = new PrintWriter(output_folder+File.separator+
+    				id+".resource.json", "UTF-8");
+        	
+        	//System.out.println("I am doing ARN:"+id+" will write to:"+output_folder+File.separator+
+    		//		id+".resource.json");
+        	
+        	to_write="";
+        	
+        	to_write+="{\"resource\": {\n\t";
+        	
+        	JSONObject objectInArray = (JSONObject)json_a.get(i);        	
+        	Set<String> elements = objectInArray.keySet();
+        	
+        	java.util.Iterator<String> it=elements.iterator();
+        	while (it.hasNext()) 
+        	{
+        		String key=it.next();
+        		
+        		if(isSpecialCase(key))
+        			continue;
+        		
+        	    //System.out.println(key+"|"+objectInArray.get(key).getClass());
+        		//System.out.println(key);
+        		if(objectInArray.get(key).getClass().equals(org.json.simple.JSONArray.class))
+        		{
+        			handleJSONArray((JSONArray)objectInArray.get(key), key);
+        		}
+        		else if(objectInArray.get(key).getClass().equals(org.json.simple.JSONObject.class))
+        		{
+        			handleJSONObject((JSONObject)objectInArray.get(key), key);
+        		}
+        		else
+        		{
+        			handlePlainValue(objectInArray.get(key), key);
+        		}
+        	}
+        	
+        	to_write+="}}";
+    		
+    		to_write=to_write.replace(",\n}}", "\n}}");
+    		to_write=to_write.replace(",\n\t}", "\n\t}");
+    		to_write=to_write.replace(",]", "]");
+    		to_write=to_write.replace(",\n\t]", "\n\t]");
+    		
+    		//System.out.println(to_write);
+    		writer.println(to_write);
+    		writer.flush();
+    		writer.close();
+        
+    		//if(i==1)
+    		//	System.exit(0);
+    		
+        }
+        
+        if(true)
+        	return;
         
         for(int i=0;i<json_a.size();i++)
         {
@@ -163,8 +409,9 @@ public class AKJSONWriter
         	    				"corporate_author",(JSONObject)json_a.get(i));
             	    fetch_multivalue_inner_inner
         	    		("dct:publisher","foaf:Organization", "foaf:name","publisher",(JSONObject)json_a.get(i));
-            	    
-            	    fetch_plain_inner_inner_combo
+            	                	    
+            	    fetch_inner_array("dct:isPartOf", "rdf:resource","journal_uri",(JSONObject)json_a.get(i));            	    
+            	    fetch_array_inner_inner_combo
             	    	("dct:isPartOf","bibo:Journal", "dct:title","bibo:ISSN",
             	    			"partof","title","issn",(JSONObject)json_a.get(i));
             	    
@@ -176,6 +423,8 @@ public class AKJSONWriter
         		
         		to_write=to_write.replace(",\n}}", "\n}}");
         		to_write=to_write.replace(",\n\t}", "\n\t}");
+        		to_write=to_write.replace(",]", "]");
+        		
         		
         		writer.println(to_write);        		
         		writer.close();
@@ -215,12 +464,48 @@ public class AKJSONWriter
 		}
 		catch(Exception e)
 		{
-			/*if(to_write.contains("QC2016000017"))
+		}
+	}
+
+	private void fetch_array_inner_inner_combo(String json_id, String lvl1_id, String lvl2_1_id, 
+			String lvl2_2_id, String output_outer, String output_1, String output_2, JSONObject json)
+	{
+		String value="";
+		try
+		{
+			JSONArray j_a=((JSONArray)json.get(json_id));
+
+			for(int i=0;i<j_a.size();i++)
 			{
-				System.out.println(json_id+"|"+lvl1_id);
-				System.out.println(((JSONObject)((JSONObject)json.get(json_id))).get(lvl1_id).toString());
-				e.printStackTrace();
-			}*/
+				String v;
+				
+				try
+				{
+					v=((JSONObject)((JSONObject)((JSONObject)j_a.get(i))).get(lvl1_id)).get(lvl2_1_id).toString();
+					value+="\""+output_1+"\":\""+v+"\",\n\t";
+					
+	
+					v=((JSONObject)((JSONObject)((JSONObject)j_a.get(i))).get(lvl1_id)).get(lvl2_2_id).toString();
+					value+="\""+output_2+"\":\""+v+"\",\n\t";
+					
+					
+					if(i!=j_a.size()-1)
+						value+=",";
+				}
+				catch(Exception e)
+				{
+				}
+			}
+			
+
+			to_write+="\""+output_outer+"\":{"+value+"},\n\t";
+			
+			//System.out.println(to_write);
+		}
+		catch(Exception e)
+		{
+			fetch_plain_inner_inner_combo(json_id, lvl1_id, lvl2_1_id, 
+					lvl2_2_id, output_outer, output_1, output_2, json);
 		}
 	}
 
@@ -234,10 +519,14 @@ public class AKJSONWriter
 
 			for(int i=0;i<j_a.size();i++)
 			{
-				value+="\""+(((JSONObject)j_a.get(i)).get(inner_id)).toString()+"\"";
-				
-				if(i!=j_a.size()-1)
-					value+=",";				
+				try
+				{
+					value+="\""+(((JSONObject)j_a.get(i)).get(inner_id)).toString()+"\"";
+					
+					if(i!=j_a.size()-1)
+						value+=",";
+				}
+				catch(Exception e){}
 			}
 			
 			
@@ -325,7 +614,7 @@ public class AKJSONWriter
 			fetch_plain(json_id,output_id,json);
 		}
 	}
-	
+
 	private void fetch_inner(String json_id, String json_inner, String output_id, JSONObject json)
 	{
 		String value;
@@ -340,7 +629,41 @@ public class AKJSONWriter
 		}
 		catch(Exception e)
 		{
+			//e.printStackTrace();
+		}
+	}
+
+	private void fetch_inner_array(String json_id, String json_inner, String output_id, JSONObject json)
+	{
+		String value="";
+		try
+		{
+			JSONArray j_a=((JSONArray)json.get(json_id));
+
+			for(int i=0;i<j_a.size();i++)
+			{
+				try
+				{
+					value+="\""+((JSONObject)j_a.get(i)).get(json_inner).toString()+"\"";
+					
+					if(i!=j_a.size()-1)
+						value+=",";
+				}
+				catch(Exception e){}
+			}
 			
+			
+			if(value.contains("\"content\":"))
+				return;
+			
+			to_write+="\""+output_id+"\":["+value+"],\n\t";
+			//System.out.println(to_write);
+			
+		}
+		catch(Exception e)
+		{
+			//e.printStackTrace();
+			fetch_inner(json_id, json_inner, output_id, json);
 		}
 	}
 	

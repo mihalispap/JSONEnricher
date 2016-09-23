@@ -46,17 +46,22 @@ public class Parser {
 	public static int PRETTY_PRINT_INDENT_FACTOR = 4;
 	
 	static String output;
+	static String operation="";
 	static String folder_path; 
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-
+		
+		
+		
         if (args.length <= 3) {
             System.err.println("Usage: -e:{enrichment_methods} -s:{services_to_use} "
-            		+ "-i:{path_to_input_dir} -o:{path_to_output_dir}");                
+            		+ "-i:{path_to_input_dir} -o:{path_to_output_dir} -op:{split,enrich}");                
             System.exit(1);
         }
+
+        //operation="";
         
         for(int i=0;i<args.length;i++)
         {
@@ -66,6 +71,8 @@ public class Parser {
         		handle_services(args[i]);
         	else if(args[i].startsWith("-i"))
         		handle_input(args[i]);
+        	else if(args[i].startsWith("-op"))
+        		handle_operation(args[i]);
         	else if(args[i].startsWith("-o"))
         		handle_output(args[i]);
         }
@@ -100,12 +107,40 @@ public class Parser {
         		System.out.println("Directory " + listOfFiles[i].getName());
             }
         }
-       
-        for(int i=0;i<listOfFiles.length;i++)
+        AKJSONWriter writer=new AKJSONWriter();
+        if(operation.equals("split"))
         {
-        	if(listOfFiles[i].getName().endsWith(".json"))
-        		enrich(listOfFiles[i].getAbsolutePath(), output, listOfFiles[i].getName());
+        
+	        for(int i=0;i<listOfFiles.length;i++)
+	        {
+	        	if(listOfFiles[i].getName().endsWith(".json"))
+	        	{	        		
+	        		try 
+	        		{
+	        			writer.writeCore(output, listOfFiles[i].getAbsolutePath());
+	        		} 
+	        		catch (Exception e) 
+	        		{
+	        			// TODO Auto-generated catch block
+	        			e.printStackTrace();
+	        		} 
+	        				
+	        	}
+	        		//enrich(listOfFiles[i].getAbsolutePath(), output, listOfFiles[i].getName());
+	        }
         }
+        if(operation.equals("enrich"))
+        { 
+        	for(int i=0;i<listOfFiles.length;i++)
+        	{
+        		if(listOfFiles[i].getName().endsWith(".json"))
+        		{
+        			enrich(listOfFiles[i].getAbsolutePath(), output, listOfFiles[i].getName());
+        			
+        		}
+        	}
+        }
+        System.out.println(operation);
 	}
 	
 	static void enrich(String filename, String output_folder, String init_fname)
@@ -130,37 +165,26 @@ public class Parser {
 		
 		for(int i=0;i<enrichers.size();i++)
 		{
+			System.out.println(filename);
 			annotations.addAll(enrichers.get(i).enrich(filename));
 		}
 		
 		/*Need writer class*/
-		
 		AKJSONWriter writer=new AKJSONWriter();
 		
-		try 
-		{
-			writer.writeCore(output_folder, filename);
-		} 
-		catch (Exception e) 
-		{
+		try {
+			writer.writeAnnotations(annotations, output);
+		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-
-
-			try {
-				writer.writeAnnotations(annotations, output_folder);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}//System.out.println(annotations.get(i).toString());
-				
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 	}
 	
@@ -172,6 +196,7 @@ public class Parser {
 			}
 
 	static ArrayList<String> enrichments=new ArrayList<String>();
+	
 	private static void handle_enrichments(String input)
 	{
 		String[] values=input.replace("-e:", "").split(",");
@@ -191,13 +216,19 @@ public class Parser {
 
 	private static void handle_input(String input)
 	{
-		System.out.println(input);
+		//System.out.println(input);
 		folder_path=input.replace("-i:", "");
 	}
-	
+
 	private static void handle_output(String input)
 	{
 		output=input.replace("-o:", "");
+	}
+
+	private static void handle_operation(String input)
+	{
+		System.out.println("I got in here!");
+		operation=input.replace("-op:", "");
 	}
 	
 	

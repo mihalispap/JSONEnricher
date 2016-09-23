@@ -2,6 +2,7 @@ package com.agroknow.enricher;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,7 +24,7 @@ public class LocationEnricher extends Enricher {
 
 	public ArrayList<Annotation> enrich(String jsonfile)
 	{
-		
+
 		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
 		String arn="";
 		
@@ -33,7 +34,24 @@ public class LocationEnricher extends Enricher {
         	
             System.out.println("I will parse:"+jsonfile);
             
-            JSONObject json = (JSONObject) new JSONParser().parse(contents);            
+            JSONObject json =(JSONObject) ( (JSONObject) new JSONParser().parse(contents)).get("resource");
+            
+            Set<String> elements = json.keySet();
+        	
+            System.out.println(elements);
+            
+        	java.util.Iterator<String> it=elements.iterator();
+        	while (it.hasNext()) 
+        	{
+        		String key=it.next();
+        		
+        		
+        	    //System.out.println(key+"|"+objectInArray.get(key).getClass());
+        		System.out.println(key);
+        		
+        	}
+            
+            if(true) return null;
             //JSONArray json_a=((JSONArray)((JSONObject)json.get("rdf:RDF")).get("bibo:Article"));
             
             JSONArray json_a = new JSONArray();
@@ -59,7 +77,9 @@ public class LocationEnricher extends Enricher {
             	{
             		annotations.addAll(check((JSONObject)json_a.get(i), "dc:subject"));
             	}
-            	catch(Exception e){}
+            	catch(Exception e){
+            		e.printStackTrace();
+            	}
             	try
             	{
             		annotations.addAll(check((JSONObject)json_a.get(i), "dct:title"));
