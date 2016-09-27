@@ -1,6 +1,10 @@
 package com.agroknow.enricher;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,14 +33,22 @@ public abstract class Enricher
 	
 	public String language="en";
 	
-	private ArrayList<Annotation> run_services(String input) throws Exception
+	protected ArrayList<Annotation> run_services(String input) throws Exception
 	{
-		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
-		for(int i=0;i<services.size();i++)
-			annotations.addAll(services.get(i).run(input, language));
-		return annotations;
+		try
+		{
+			ArrayList<Annotation> annotations=new ArrayList<Annotation>();
+			for(int i=0;i<services.size();i++)
+				annotations.addAll(services.get(i).run(input, language));
+			return annotations;
+		}
+		catch(Exception e)
+		{
+			//e.printStackTrace();
+			return null;
+		}
 	}
-	
+
 	protected ArrayList<Annotation> check(JSONObject json, String identifier)
 	{
 		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
@@ -71,6 +83,46 @@ public abstract class Enricher
     	{
     		
     	}
+		
+		return annotations;
+	}
+
+	protected ArrayList<Annotation> check(String input)
+	{
+		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
+
+		try
+    	{
+    		String value=input;
+
+    		value=value.replace("[", "");
+    		value=value.replace("]", "");
+    		value=value.replace("\"", "");
+			
+    		identify_lang(value);
+    		
+    		annotations.addAll(run_services(value));    
+    		
+    		String[] values=value.split(",");
+    		
+    		for(int j=0;j<values.length;j++)
+    		{
+    			
+    			String[] inner=values[j].split(" ");
+    			
+    			for(int k=0;k<inner.length;k++)
+    			{
+    				annotations.addAll(run_services(inner[k]));
+    				if(k!=inner.length-1)
+    					annotations.addAll(run_services(inner[k]+" "+inner[k+1]));
+    			}
+    		}
+    	}
+    	catch(Exception e)
+    	{
+
+    	}
+		
 		
 		return annotations;
 	}

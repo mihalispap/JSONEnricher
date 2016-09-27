@@ -71,7 +71,7 @@ public class Geonames extends Service {
 					
 					annotations.add(annotation);
 					
-					System.out.println(annotation.toString());
+					//System.out.println(annotation.toString());
 
 					break;
 				}
@@ -113,7 +113,7 @@ public class Geonames extends Service {
 					annotation.vocabulary="geonames";
 					annotations.add(annotation);
 					
-					System.out.println(annotation.toString());
+					//System.out.println(annotation.toString());
 					
 					break;
 				}

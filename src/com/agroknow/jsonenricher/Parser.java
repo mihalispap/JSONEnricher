@@ -35,11 +35,15 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.http.HTTPRepository;
 import org.openrdf.repository.manager.RemoteRepositoryManager;
 
-import com.agroknow.enricher.AGROVOCEnricher;
+import com.agroknow.enricher.SubjectEnricher;
 import com.agroknow.enricher.Enricher;
 import com.agroknow.enricher.LocationEnricher;
 import com.agroknow.utils.AKJSONWriter;
 import com.agroknow.utils.Annotation;
+
+import edu.harvard.hul.ois.fits.Fits;
+import edu.harvard.hul.ois.fits.FitsOutput;
+import edu.harvard.hul.ois.fits.exceptions.FitsConfigurationException;
 
 public class Parser {
  
@@ -61,6 +65,28 @@ public class Parser {
             System.exit(1);
         }
 
+        /*
+        try 
+        {
+        	String fits_home=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+    				+ "fits"+System.getProperty("file.separator");
+			Fits fits = new Fits(fits_home);
+						
+			File input = new File("C:\\Users\\Mihalis\\Desktop\\PayPal Checkout - Payment completed!.pdf");
+			FitsOutput fitsOut = fits.examine(input);
+			
+			System.out.println(fitsOut.);			
+			
+			fitsOut.saveToDisk("C:\\Users\\Mihalis\\Desktop\\ftp\\urban\\enrich\\nn\\nn\\2016.rdf\\nn\\nn\\n\\json\\nn\\2006\\output\\enriched\\n\\nn\\splitted\\enriched\\n\\file.out");
+		} 
+        catch (Exception e1) 
+        {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			System.exit(1);
+		} 
+        System.exit(1);
+        */
         //operation="";
         
         for(int i=0;i<args.length;i++)
@@ -156,7 +182,7 @@ public class Parser {
 			}
 			if(enrichments.get(i).equals("agrovoc"))
 			{
-				AGROVOCEnricher ag_enrich=new AGROVOCEnricher();		
+				SubjectEnricher ag_enrich=new SubjectEnricher();		
 				enrichers.add(ag_enrich);
 			}
 		}
@@ -168,6 +194,7 @@ public class Parser {
 			System.out.println(filename);
 			annotations.addAll(enrichers.get(i).enrich(filename));
 		}
+		
 		
 		/*Need writer class*/
 		AKJSONWriter writer=new AKJSONWriter();

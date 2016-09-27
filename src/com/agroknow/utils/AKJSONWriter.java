@@ -107,6 +107,8 @@ public class AKJSONWriter
 			return "person";
 		if(key.equals("bibo:ISSN"))
 			return "issn";
+		if(key.equals("bibo:ISBN"))
+			return "isbn";
 		if(key.equals("content"))
 			return "value";
 		if(key.equals("xml:lang"))
@@ -117,6 +119,14 @@ public class AKJSONWriter
 			return "volume";
 		if(key.equals("foaf:Organization"))
 			return "organization";
+		if(key.equals("bibo:doi"))
+			return "doi";
+		if(key.equals("bibo:uri"))
+			return "url";
+		if(key.equals("dct:publisher"))
+			return "publisher";
+		if(key.equals("dct:medium"))
+			return "medium";
 		
 		return "field:"+key;
 	}
@@ -229,43 +239,91 @@ public class AKJSONWriter
     	PrintWriter writer = new PrintWriter(output_folder+File.separator+
 				annotations.get(0).arn+".annotation.json", "UTF-8");
  
+    	Utilities utils = new Utilities();
+    	annotations = utils.cleanseAnnotations(annotations);
+    	
+    	/*System.out.println("-INIT CASE-");
+		for(int i=0;i<annotations.size();i++)
+			System.out.println(annotations.get(i));
+		System.out.println("---");*/
+    	
 		to_write="{\"enriched\":{\n\t\"arn\":\""+annotations.get(0).arn+"\",\n\t";
 		for(int i=0;i<annotations.size();i++)
-		{            		
-            			String jsonid=annotations.get(i).jsonid;
-            			String uris=annotations.get(i).uri;
+		{
+			String jsonid=annotations.get(i).jsonid;
+			
+			if(annotations.get(i).exists(annotations, (i+1), jsonid))
+					continue;
+					
+			//System.out.println("Until here with value:"+annotations.get(i).toString());
+			
+            			String uri=annotations.get(i).uri;
             			String values=annotations.get(i).value;
             			String scores=String.valueOf(annotations.get(i).score);
             			
             			String initid=jsonid;
             			
-            			to_write+="\""+jsonid+"\":[{\"value\":"
+            			/*to_write+="\""+jsonid+"\":[{\"value\":"
             					+ "\""+annotations.get(i).value+"\", "
             							+ "\"uri\":\""+annotations.get(i).uri+"\","
             							+ "\"score\":"+annotations.get(i).score+","
             							+ "\"vocabulary\":\""+annotations.get(i).vocabulary+"\"}";
-            					
+            			*/
+    					to_write+="\""+jsonid+"\":[{";
+    						to_write+="\"value\":"
+    								+ "\""+annotations.get(i).value.toLowerCase()+"\",";
+    						to_write+="\"uri\":[";
+    							to_write+=utils.fetch_uris(annotations, annotations.get(i).value, jsonid);
+    						to_write+="],";
+    						
+    						to_write+="\"score\":"+utils.fetch_max_score(annotations, 
+    									annotations.get(i).value, jsonid);
+    						
+    						to_write+=",\"vocabulary\":[";
+    							to_write+=utils.fetch_vocs(annotations, 
+    									annotations.get(i).value, jsonid);
+    						to_write+="]\n\t}";
+    						
+    						if(i!=annotations.size()-1)
+                			{
+                				i++;
+                				while(annotations.get(i).jsonid==initid)
+                				{
+                					if(annotations.get(i).exists(annotations, (i+1), jsonid))
+                					{
+                						i++;
+                						continue;
+                					}
+                					to_write+=",\n\t{\"value\":"
+                        					+ "\""+annotations.get(i).value+"\", ";
+                					
+                					
+                					to_write+="\"uri\":[";
+	        							to_write+=utils.fetch_uris(annotations, annotations.get(i).value, jsonid);
+	        						to_write+="],";
+	        						
+	        						to_write+="\"score\":"+utils.fetch_max_score(annotations, 
+	        									annotations.get(i).value, jsonid);
+	        						
+	        						to_write+=",\"vocabulary\":[";
+	        							to_write+=utils.fetch_vocs(annotations, 
+	        									annotations.get(i).value, jsonid);
+	        						to_write+="]\n\t}";
+                					
+                					i++;
+                					if(i==annotations.size())
+                						break;
+                				}
+                				i--;
+                			}
+    					to_write+="],\n\t";
             			
-            			if(i!=annotations.size()-1)
-            			{
-            				i++;
-            				while(annotations.get(i).jsonid==initid)
-            				{
-            					to_write+=",\n\t{\"value\":"
-                    					+ "\""+annotations.get(i).value+"\", "
-                    							+ "\"uri\":\""+annotations.get(i).uri+"\","
-                    							+ "\"score\":"+annotations.get(i).score+","
-                    							+ "\"vocabulary\":\""+annotations.get(i).vocabulary+"\"}";
-            					
-            					i++;
-            					if(i==annotations.size())
-            						break;
-            				}
-            			}
-            		to_write+="],";
         } 
 		to_write+="}}";
+		to_write=to_write.replace(",]", "]");
+		to_write=to_write.replace("[,", "[");
 		to_write=to_write.replace("],}}","]}}");
+		to_write=to_write.replace("}],\n\t}", "}]\n\t}");
 		
 		writer.println(to_write);        		
 		writer.close();

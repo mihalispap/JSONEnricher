@@ -58,7 +58,9 @@ public class AKSPARQL_AGROVOC extends Service
 				String queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 						+ "select * "
 						+ "where "
-						+ " { ?s skos:prefLabel \""+toCheck+"\"@"+language+" . } "
+						//+ " { ?s skos:prefLabel \""+toCheck+"\"@"+language+" . } "
+						+ " { ?s skos:prefLabel ?name . "
+						+ "FILTER (lcase(str(?name)) = \""+input+"\")  } "
 								+ "limit 500";
 				
 				//System.out.println("Will run query:"+queryString);
@@ -82,10 +84,10 @@ public class AKSPARQL_AGROVOC extends Service
 					annotation.value=toCheck;
 					annotation.score=1.0f;
 					annotation.uri=bindingSet.getBinding("s").getValue().stringValue();
-					annotation.vocabulary="AGROVOC";
+					annotation.vocabulary="agrovoc";
 					
 					annotations.add(annotation);
-					
+					System.out.println("AKSPARQL_AGROVOC");
 					// do something interesting with the values here...
 				}
 		

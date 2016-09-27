@@ -189,7 +189,7 @@ public class FremeGeonames extends Service {
 	        		        	
 	        	QuerySolution qs = results.next();
 	        	//System.out.println(qs.g);
-	        	//System.out.println(qs.getLiteral("cs").getFloat());
+	        	System.out.println(qs.getLiteral("cs").getFloat());
 	        	
 	        	Annotation annotation = new Annotation();	        	
 	        	annotation.score=qs.getLiteral("cs").getFloat();

@@ -47,5 +47,34 @@
 	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/lib/openrdf-alibaba/openrdf-sesame-2.6.0-onejar.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/lib/language-detector-0.5.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/lib/guava-16.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/lib/okhttp-3.4.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/lib/fits-1.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/AES31.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/commons-configuration-1.8.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/fast-md5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/fits-1.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/hclaps.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/jaxen-core.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/jaxen-jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/ots_1.0.39.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/saxon9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/saxon9-dom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/saxon9-jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/saxpath.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/serializer.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/slf4j-api-1.7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/slf4j-log4j12-1.7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/stax2-api-3.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/staxmate-2.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/woodstox-core-lgpl-4.0.7.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/JSONEnricher/JSONEnricher/fits/lib/xercesImpl-2.9.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
