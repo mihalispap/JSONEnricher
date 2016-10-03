@@ -15,12 +15,16 @@ public class AKSPARQL_VIVO extends Service {
 
 	public AKSPARQL_VIVO() {
 		// TODO Auto-generated constructor stub
+		this.started_on=System.currentTimeMillis()/1000;
+		this.name="AK VIVO";
+		
+		this.base_uri="i_always_run";
 	}
 
 
 	public ArrayList<Annotation> run(String input, String language) throws Exception
 	{
-		
+		input=input.toLowerCase();
 		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
 				
 			String toCheck;
@@ -31,8 +35,18 @@ public class AKSPARQL_VIVO extends Service {
 			toCheck=toCheck.replace("-", "");
 			toCheck=toCheck.replace("{", "");
 			toCheck=toCheck.replace("}", "");
-			toCheck=toCheck.replace(" ", "");
 			toCheck=toCheck.replace("/", "");
+
+			toCheck=toCheck.replace("  ", " ");
+			
+			if(toCheck.startsWith(" "))
+				toCheck=toCheck.replaceFirst(" ", "");
+			if(toCheck.endsWith(" "))
+			{
+				StringBuilder b = new StringBuilder(toCheck);
+				b.replace(toCheck.lastIndexOf(" "), toCheck.lastIndexOf(" ") + 1, "" );
+				toCheck = b.toString();
+			}
 			
 			try
 			{
@@ -68,7 +82,7 @@ public class AKSPARQL_VIVO extends Service {
 					annotation.value=toCheck;
 					annotation.score=1.0f;
 					annotation.uri=bindingSet.getBinding("s").getValue().stringValue();
-					annotation.vocabulary="faogeopolitical";
+					annotation.vocabulary="vivo";
 					
 					annotations.add(annotation);
 					
@@ -88,7 +102,7 @@ public class AKSPARQL_VIVO extends Service {
 			}
 
 			for(int i=0;i<annotations.size();i++)
-				annotations.get(i).jsonid="location";
+				annotations.get(i).jsonid="type";
 			return annotations;
 	}
 	

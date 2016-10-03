@@ -44,6 +44,10 @@ public class FremeGeonames extends Service {
 
 	public FremeGeonames() { 
 		// TODO Auto-generated constructor stub
+		this.started_on=System.currentTimeMillis()/1000;
+		this.name="Freme Geonames";
+		
+		this.base_uri="i_should_always_run";
 		
 	}
 
@@ -100,6 +104,11 @@ public class FremeGeonames extends Service {
 		
 		
 		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
+	
+
+		if(input.length()<20)
+			return annotations;
+		
 		
 		String uri = "https://api-dev.freme-project.eu/current/pipelining/chain";
 	

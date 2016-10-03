@@ -15,11 +15,15 @@ public class AKSPARQL_FAOGeo extends Service {
 
 	public AKSPARQL_FAOGeo() {
 		// TODO Auto-generated constructor stub
+		this.started_on=System.currentTimeMillis()/1000;
+		this.name="AK FAO";
+		
+		this.base_uri="http://www.fao.org/countryprofiles/geoinfo";
 	}
 
 	public ArrayList<Annotation> run(String input, String language) throws Exception
 	{
-		
+		input=input.toLowerCase();
 		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
 				
 			String toCheck;
@@ -30,8 +34,19 @@ public class AKSPARQL_FAOGeo extends Service {
 			toCheck=toCheck.replace("-", "");
 			toCheck=toCheck.replace("{", "");
 			toCheck=toCheck.replace("}", "");
-			toCheck=toCheck.replace(" ", "");
 			toCheck=toCheck.replace("/", "");
+			
+			toCheck=toCheck.replace("  ", " ");
+			
+			if(toCheck.startsWith(" "))
+				toCheck=toCheck.replaceFirst(" ", "");
+			if(toCheck.endsWith(" "))
+			{
+				StringBuilder b = new StringBuilder(toCheck);
+				b.replace(toCheck.lastIndexOf(" "), toCheck.lastIndexOf(" ") + 1, "" );
+				toCheck = b.toString();
+			}
+			
 			
 			try
 			{
@@ -39,7 +54,8 @@ public class AKSPARQL_FAOGeo extends Service {
 				String repositoryId="faogeopolitical";
 				String ApiKey = "";
 				String ApiPass = "";
-				String queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
+				
+				/*String queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 						+ "select * "
 						+ "where "
 						//+ " { ?s <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/nameShort> \""+toCheck+"\"@"+language+" . } "
@@ -47,7 +63,13 @@ public class AKSPARQL_FAOGeo extends Service {
 						+ "			?name. "
 						+ "FILTER (lcase(str(?name)) = \""+input+"\")  } "
 								+ "limit 1";
-				
+				*/
+				String queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
+						+ "select * "
+						+ "where "
+						+ " { ?s <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/nameShort>"
+							+ "	 \""+input+"\"@"+language+". } "
+								+ "limit 1";
 				//System.out.println("Will run query:"+queryString);
 				
 				//System.exit(1);
@@ -63,6 +85,22 @@ public class AKSPARQL_FAOGeo extends Service {
 		
 				TupleQueryResult result = tupleQuery.evaluate();
 		
+				if(!result.hasNext())
+				{
+					queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
+							+ "select * "
+							+ "where "
+							+ " { ?s <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/nameShort>"
+							+ "	 \""+input.toLowerCase()+"\"@"+language+". } "
+									+ "limit 1";
+					
+			        tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL,
+							queryString);
+			
+					result = tupleQuery.evaluate();
+				}
+				
+				
 				while (result.hasNext()) { // iterate over the result
 					BindingSet bindingSet = result.next();
 					//System.out.println(bindingSet.getBinding("s").getValue());
@@ -76,7 +114,7 @@ public class AKSPARQL_FAOGeo extends Service {
 					annotations.add(annotation);
 					
 					//System.out.println("I found:"+annotation.toString());
-					System.out.println("AKSPARQL_FAOGEO");
+					//System.out.println("AKSPARQL_FAOGEO");
 					// do something interesting with the values here...
 				}
 		

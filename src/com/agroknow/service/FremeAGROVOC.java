@@ -19,6 +19,10 @@ public class FremeAGROVOC extends Service {
 
 	public FremeAGROVOC() {
 		// TODO Auto-generated constructor stub 
+		this.started_on=System.currentTimeMillis()/1000;
+		this.name="Freme AGROVOC";
+		
+		this.base_uri="i_should_always_run";
 	}
 
 	
@@ -29,6 +33,10 @@ public class FremeAGROVOC extends Service {
 						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
 	
 		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
+
+		if(input.length()<20)
+			return annotations;
+		
 		
 		URL url = new URL(uri);
 		//logger.info("Calling FREME e-terminology: "+uri);

@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 
 import com.agroknow.service.Service;
 import com.agroknow.utils.Annotation;
+import com.agroknow.utils.Utilities;
 import com.google.common.base.Optional;
 import com.optimaize.langdetect.LanguageDetector;
 import com.optimaize.langdetect.LanguageDetectorBuilder;
@@ -31,21 +32,40 @@ public abstract class Enricher
 	public ArrayList<Service> services=new ArrayList<Service>();
 	public ArrayList<Annotation> enrich(String jsonfile){return null;}; 
 	
-	public String language="en";
+	public String language="";
 	
-	protected ArrayList<Annotation> run_services(String input) throws Exception
+	protected ArrayList<Annotation> run_services(String input, ArrayList<Annotation> annotations_g) throws Exception
 	{
+		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
+		
+		Utilities utils = new Utilities();
 		try
 		{
-			ArrayList<Annotation> annotations=new ArrayList<Annotation>();
 			for(int i=0;i<services.size();i++)
-				annotations.addAll(services.get(i).run(input, language));
+			{
+				/*Logging*/
+				//services.get(i).setStartedTime();
+				
+				/*TODO:
+				 * 		check if i should also pass annotations variable (current annotations)				 * 
+				 * */
+				if(!utils.isWorthRunning(services.get(i), annotations_g, input))
+					continue;
+				
+				try
+				{
+					annotations.addAll(services.get(i).run(input, language));
+				}
+				catch(Exception e){}
+				/*Printing*/
+				//services.get(i).printStats();
+			}
 			return annotations;
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			return null;
+			return annotations;
 		}
 	}
 
@@ -57,31 +77,41 @@ public abstract class Enricher
     	{
     		String value=((JSONObject)json).get(identifier).toString();
 
-    		value=value.replace("[", "");
-    		value=value.replace("]", "");
-    		value=value.replace("\"", "");
+    		Utilities utils = new Utilities();
+   		
+    		value=value.replace("[", " ");
+    		value=value.replace("]", " ");
+    		value=value.replace("\"", " ");
+    		value=value.replace("(", " ");
+    		value=value.replace(")", " ");
+    		value=value.replace(".", " ");
 			
     		identify_lang(value);
     		
-    		annotations.addAll(run_services(value));    		
+    		annotations.addAll(run_services(value, annotations));    		
     		String[] values=value.split(",");
     		
     		for(int j=0;j<values.length;j++)
     		{
-    			
+
     			String[] inner=values[j].split(" ");
     			
     			for(int k=0;k<inner.length;k++)
     			{
-    				annotations.addAll(run_services(inner[k]));
+ 				
+    				if(utils.isStopWord(inner[k]))
+    					continue;
+    				
+    				
+    				annotations.addAll(run_services(inner[k], annotations));
     				if(k!=inner.length-1)
-    					annotations.addAll(run_services(inner[k]+" "+inner[k+1]));
+    					annotations.addAll(run_services(inner[k]+" "+inner[k+1], annotations));
     			}
     		}
     	}
     	catch(Exception e)
     	{
-    		
+    		return annotations;
     	}
 		
 		return annotations;
@@ -95,13 +125,18 @@ public abstract class Enricher
     	{
     		String value=input;
 
-    		value=value.replace("[", "");
-    		value=value.replace("]", "");
-    		value=value.replace("\"", "");
-			
+    		value=value.replace("[", " ");
+    		value=value.replace("]", " ");
+    		value=value.replace("\"", " ");
+    		value=value.replace("(", " ");
+    		value=value.replace(")", " ");
+    		value=value.replace(".", " ");
+    		
+    		Utilities utils = new Utilities();
+    		
     		identify_lang(value);
     		
-    		annotations.addAll(run_services(value));    
+    		annotations.addAll(run_services(value, annotations));    
     		
     		String[] values=value.split(",");
     		
@@ -112,9 +147,15 @@ public abstract class Enricher
     			
     			for(int k=0;k<inner.length;k++)
     			{
-    				annotations.addAll(run_services(inner[k]));
+    				if(utils.isStopWord(inner[k]))
+    					continue;
+
+    				//if(utils.alreadyEnriched(inner[k],annotations))
+    				//	continue;
+    				
+    				annotations.addAll(run_services(inner[k], annotations));
     				if(k!=inner.length-1)
-    					annotations.addAll(run_services(inner[k]+" "+inner[k+1]));
+    					annotations.addAll(run_services(inner[k]+" "+inner[k+1], annotations));
     			}
     		}
     	}

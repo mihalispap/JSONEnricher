@@ -15,6 +15,11 @@ public class AKSPARQL_GrapeVarieties extends Service {
 
 	public AKSPARQL_GrapeVarieties() {
 		// TODO Auto-generated constructor stub
+
+		this.started_on=System.currentTimeMillis()/1000;
+		this.name="AK GV";
+		
+		this.base_uri="http://vitis.agroknow.com/";
 	}
 
 
@@ -31,8 +36,18 @@ public class AKSPARQL_GrapeVarieties extends Service {
 			toCheck=toCheck.replace("-", "");
 			toCheck=toCheck.replace("{", "");
 			toCheck=toCheck.replace("}", "");
-			toCheck=toCheck.replace(" ", "");
 			toCheck=toCheck.replace("/", "");
+
+			toCheck=toCheck.replace("  ", " ");
+			
+			if(toCheck.startsWith(" "))
+				toCheck=toCheck.replaceFirst(" ", "");
+			if(toCheck.endsWith(" "))
+			{
+				StringBuilder b = new StringBuilder(toCheck);
+				b.replace(toCheck.lastIndexOf(" "), toCheck.lastIndexOf(" ") + 1, "" );
+				toCheck = b.toString();
+			}
 			
 			try
 			{
@@ -43,8 +58,9 @@ public class AKSPARQL_GrapeVarieties extends Service {
 				String queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 						+ "select * "
 						+ "where "
-						+ " { ?s skos:prefLabel \""+toCheck+"\" . } "
-								+ "limit 500";
+						+ " { ?s rdfs:label ?label."
+						+ "FILTER (lcase(str(?label)) = \""+input+"\")  }"
+						+ "limit 1";
 				
 				//System.out.println("Will run query:"+queryString);
 				

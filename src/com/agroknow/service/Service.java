@@ -19,7 +19,17 @@ public abstract class Service
 {
 	public ArrayList<Annotation> run(String input, String language) throws Exception{return null;} 
 
-		
+	public String name;
+	public long started_on;
+	public String base_uri;
+	
+	public void setStartedTime(){this.started_on=System.currentTimeMillis()/1000;}
+	
+	public void printStats()
+	{
+		System.out.println(this.name+" took:"+(System.currentTimeMillis()/1000 - this.started_on));
+	}
+	
 	private static String readAll(Reader rd) throws IOException {
 	    StringBuilder sb = new StringBuilder();
 	    int cp;

@@ -36,7 +36,9 @@ import org.openrdf.repository.http.HTTPRepository;
 import org.openrdf.repository.manager.RemoteRepositoryManager;
 
 import com.agroknow.enricher.SubjectEnricher;
+import com.agroknow.enricher.TypeEnricher;
 import com.agroknow.enricher.Enricher;
+import com.agroknow.enricher.LanguageEnricher;
 import com.agroknow.enricher.LocationEnricher;
 import com.agroknow.utils.AKJSONWriter;
 import com.agroknow.utils.Annotation;
@@ -72,10 +74,10 @@ public class Parser {
     				+ "fits"+System.getProperty("file.separator");
 			Fits fits = new Fits(fits_home);
 						
-			File input = new File("C:\\Users\\Mihalis\\Desktop\\PayPal Checkout - Payment completed!.pdf");
+			File input = new File("C:\\Users\\Mihalis\\Desktop\\ftp\\urban\\enrich\\nn\\nn\\2016.rdf\\nn\\nn\\n\\json\\nn\\2006\\output\\enriched\\n\\nn\\splitted\\enriched\\n\\nn\\data\\2_2016\\AL1\\log\\n\\nn\\nnn\\nn\\images9401059689361.jpg");
 			FitsOutput fitsOut = fits.examine(input);
 			
-			System.out.println(fitsOut.);			
+			//System.out.println(fitsOut.);			
 			
 			fitsOut.saveToDisk("C:\\Users\\Mihalis\\Desktop\\ftp\\urban\\enrich\\nn\\nn\\2016.rdf\\nn\\nn\\n\\json\\nn\\2006\\output\\enriched\\n\\nn\\splitted\\enriched\\n\\file.out");
 		} 
@@ -87,6 +89,7 @@ public class Parser {
 		} 
         System.exit(1);
         */
+        
         //operation="";
         
         for(int i=0;i<args.length;i++)
@@ -161,8 +164,13 @@ public class Parser {
         	{
         		if(listOfFiles[i].getName().endsWith(".json"))
         		{
+        			System.out.println(listOfFiles[i].getName());
+        			long start = System.currentTimeMillis()/1000;
+        			
         			enrich(listOfFiles[i].getAbsolutePath(), output, listOfFiles[i].getName());
         			
+        			System.out.println("Took: "+(System.currentTimeMillis()/1000-start)+"s");
+        			//System.exit(1);
         		}
         	}
         }
@@ -180,9 +188,19 @@ public class Parser {
 				LocationEnricher loc_enrich=new LocationEnricher();		
 				enrichers.add(loc_enrich);				
 			}
-			if(enrichments.get(i).equals("agrovoc"))
+			if(enrichments.get(i).equals("subject"))
 			{
 				SubjectEnricher ag_enrich=new SubjectEnricher();		
+				enrichers.add(ag_enrich);
+			}
+			if(enrichments.get(i).equals("type"))
+			{
+				TypeEnricher ag_enrich=new TypeEnricher();		
+				enrichers.add(ag_enrich);
+			}
+			if(enrichments.get(i).equals("language"))
+			{
+				LanguageEnricher ag_enrich=new LanguageEnricher();		
 				enrichers.add(ag_enrich);
 			}
 		}

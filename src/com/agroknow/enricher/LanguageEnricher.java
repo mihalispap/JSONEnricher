@@ -7,54 +7,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.agroknow.service.AKSPARQL_VIVO;
+import com.agroknow.service.AKSPARQL_FAOGeo;
 import com.agroknow.service.FremeGeonames;
 import com.agroknow.service.Geonames;
+import com.agroknow.service.Lexvo;
 import com.agroknow.utils.Annotation;
 
-public class TypeEnricher extends Enricher {
+public class LanguageEnricher extends Enricher {
 
-	public TypeEnricher() {
+	public LanguageEnricher() {
 		// TODO Auto-generated constructor stub 
-		AKSPARQL_VIVO service = new AKSPARQL_VIVO();
+		Lexvo service = new Lexvo();
 		services.add(service);
 	}
 
-
-	protected ArrayList<Annotation> check(String input)
-	{
-		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
-
-		try
-    	{
-    		String value=input;
-
-    		value=value.replace("[", "");
-    		value=value.replace("]", "");
-    		value=value.replace("\"", "");
-			
-    		identify_lang(value);
-    		
-    		annotations.addAll(run_services(value, annotations));    
-    		
-    		String[] values=value.split(",");
-    		
-    		for(int j=0;j<values.length;j++)
-    		{
-    			
-    			annotations.addAll(run_services(values[j], annotations));
-    		}
-    	}
-    	catch(Exception e)
-    	{
-    		return annotations;
-    	}
-		
-		
-		return annotations;
-	}
-
-	
 	public ArrayList<Annotation> enrich(String jsonfile)
 	{
 
@@ -93,25 +59,59 @@ public class TypeEnricher extends Enricher {
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("type").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("title").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("type");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("title");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
 							annotations.addAll(check(((JSONObject)json_array.get(j))
-									.toString()));
+									.get("value").toString()));
 						}
+					}
+					else if(((JSONObject)json_a.get(i)).get("title").getClass()
+	            			.equals(org.json.simple.JSONObject.class))
+					{
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("title"))
+								.get("value").toString()));			
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("type").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("title").toString()));
 					}
             	}
             	catch(Exception e) {
             	}
 
+            	try
+            	{
+	            	if(((JSONObject)json_a.get(i)).get("abstract").getClass()
+	            			.equals(org.json.simple.JSONArray.class))
+					{
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("abstract");
+	            		
+						for(int j=0;j<json_array.size();j++)
+						{
+							annotations.addAll(check(((JSONObject)json_array.get(j))
+									.get("value").toString()));
+						}
+					}
+					else if(((JSONObject)json_a.get(i)).get("abstract").getClass()
+	            			.equals(org.json.simple.JSONObject.class))
+					{
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("abstract"))
+								.get("value").toString()));			
+					}
+					else
+					{
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("abstract").toString()));
+					}
+            	}
+            	catch(Exception e) {
+            	}
+            	
+            	
             	
             	for(int j=counter;j<annotations.size();j++)
             		annotations.get(j).arn=arn;
@@ -123,9 +123,8 @@ public class TypeEnricher extends Enricher {
         }
 
 		for(int i=0;i<annotations.size();i++)
-			annotations.get(i).jsonid="type";
+			annotations.get(i).jsonid="language";
 		
 		return annotations;
 	};
-
 }

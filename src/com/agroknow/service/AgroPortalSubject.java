@@ -26,6 +26,12 @@ public class AgroPortalSubject extends Service {
 	
 	public AgroPortalSubject() {
 		// TODO Auto-generated constructor stub
+		
+		this.started_on=System.currentTimeMillis()/1000;
+		this.name="AgroPortal";
+		
+		this.base_uri="i_should_always_run";
+		
 	}
 
 	private static String get(String urlToGet) {
@@ -57,6 +63,14 @@ public class AgroPortalSubject extends Service {
 	{
 		ArrayList<Annotation> annotations = new ArrayList<Annotation>();
 	
+		if(input.length()<20)
+			return annotations;
+		
+		/*TODO:
+		 * 		>500 case
+		 * 
+		 * */
+		
 		//apikey = "8e5bcb27-f2ef-46e7-b686-13764ed1a964";
 		//input="melanoma";
 		

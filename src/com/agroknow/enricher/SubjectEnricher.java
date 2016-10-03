@@ -8,11 +8,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.agroknow.service.AKSPARQL_AGROVOC;
+import com.agroknow.service.AKSPARQL_GACS;
 import com.agroknow.service.AKSPARQL_GrapeVarieties;
 import com.agroknow.service.AgroPortalSubject;
 import com.agroknow.service.FremeAGROVOC;
 import com.agroknow.service.Geonames;
 import com.agroknow.utils.Annotation;
+import com.agroknow.utils.Utilities;
 
 public class SubjectEnricher extends Enricher {
  
@@ -21,10 +23,11 @@ public class SubjectEnricher extends Enricher {
 		AKSPARQL_AGROVOC service = new AKSPARQL_AGROVOC();
 		services.add(service);
 		FremeAGROVOC service_f = new FremeAGROVOC();
-		//services.add(service_f); 
+		services.add(service_f); 
 		AgroPortalSubject service_ap = new AgroPortalSubject();
 		//services.add(service_ap); 
-		
+		AKSPARQL_GACS service_gc = new AKSPARQL_GACS();
+		services.add(service_gc); 
 		/*TODO:
 		 * 		add only afetr cleansing is performed!*/
 		AKSPARQL_GrapeVarieties service_gv = new AKSPARQL_GrapeVarieties();
@@ -56,9 +59,7 @@ public class SubjectEnricher extends Enricher {
             catch(java.lang.ClassCastException e)
             {
             	json_a.add((JSONObject)json.get("resource"));
-            }
-            
-            
+            }            
             
             for(int i=0;i<json_a.size();i++)
             {

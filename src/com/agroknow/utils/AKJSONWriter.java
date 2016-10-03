@@ -109,6 +109,10 @@ public class AKJSONWriter
 			return "issn";
 		if(key.equals("bibo:ISBN"))
 			return "isbn";
+		if(key.equals("bibo:issn"))
+			return "issn";
+		if(key.equals("bibo:isbn"))
+			return "isbn";
 		if(key.equals("content"))
 			return "value";
 		if(key.equals("xml:lang"))
@@ -131,11 +135,28 @@ public class AKJSONWriter
 		return "field:"+key;
 	}
 	
+	public boolean combo_flag=false;
+	
 	public boolean isSpecialCase(String key)
 	{
 		if(key.equals("bibo:authorList") || key.equals("dct:subject"))
 			return true;
 		return false;
+	}
+	
+	public void isPossibleCombo(String key)
+	{
+		if(key.equals("dct:title")
+				||
+			key.equals("bibo:abstract")
+				||
+			key.equals("dc:subject")
+				||
+			key.equals("dct:isPartOf"))
+				this.combo_flag=true;
+		else {
+			this.combo_flag=false;
+		}
 	}
 	
 	public void handleJSONArray(JSONArray json, String key)
@@ -152,7 +173,7 @@ public class AKJSONWriter
 				}
 				else if(json.get(i).getClass().equals(org.json.simple.JSONObject.class))
 				{
-					handleJSONObject((JSONObject) json.get(i),"plain");					
+					handleJSONObject((JSONObject) json.get(i),"plain");
 				}
 				else
 				{
@@ -204,6 +225,9 @@ public class AKJSONWriter
 		if(!key.equals("plain"))
 			to_write+="\""+mapped+"\":";
 		
+		else if(key.equals("plain") && this.combo_flag==true)
+			to_write+="{\"value\":";
+			
 		try
 		{
 			float v = Float.parseFloat(value.toString());
@@ -219,8 +243,11 @@ public class AKJSONWriter
 		}
 		catch(NumberFormatException e)
 		{
-			to_write+="\""+value+"\"";
+			to_write+="\""+value.toString().replace("\"","\\\"")+"\"";
 		}
+		
+		if(key.equals("plain") && this.combo_flag==true)
+			to_write+="}";
 		
 		/*if(value instanceof Number)
 			to_write+=value;
@@ -381,6 +408,8 @@ public class AKJSONWriter
         		
         		if(isSpecialCase(key))
         			continue;
+        		
+        		this.isPossibleCombo(key);
         		
         	    //System.out.println(key+"|"+objectInArray.get(key).getClass());
         		//System.out.println(key);

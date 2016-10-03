@@ -18,9 +18,9 @@ public class LocationEnricher extends Enricher {
 	public LocationEnricher() {
 		// TODO Auto-generated constructor stub 
 		Geonames service = new Geonames();
-		//services.add(service);
+		services.add(service);
 		FremeGeonames service_f = new FremeGeonames();
-		//services.add(service_f);
+		services.add(service_f);
 		AKSPARQL_FAOGeo service_akf = new AKSPARQL_FAOGeo();
 		services.add(service_akf);
 	}

@@ -116,3 +116,9 @@
 2016-09-27 15:21:52 - ERROR - SetTextFont:62 - Could not find font(COSName{F2.0}) in map={}, creating default font
 2016-09-27 15:21:52 - ERROR - SetTextFont:62 - Could not find font(COSName{F2.0}) in map={}, creating default font
 2016-09-27 15:21:52 - ERROR - SetTextFont:62 - Could not find font(COSName{F2.0}) in map={}, creating default font
+2016-09-28 15:56:07 - ERROR - ToolBase:271 - Caught exception running tool: TikaTool
+edu.harvard.hul.ois.fits.exceptions.FitsToolException: Exception reading metadata (Error on line 1: An invalid XML character (Unicode: 0x2) was found in the element content of the document.)
+	at edu.harvard.hul.ois.fits.tools.tika.TikaTool.buildRawData(TikaTool.java:522)
+	at edu.harvard.hul.ois.fits.tools.tika.TikaTool.extractInfo(TikaTool.java:445)
+	at edu.harvard.hul.ois.fits.tools.ToolBase.run(ToolBase.java:268)
+	at java.lang.Thread.run(Unknown Source)

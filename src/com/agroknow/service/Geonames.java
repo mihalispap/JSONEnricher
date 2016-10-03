@@ -12,12 +12,21 @@ public class Geonames extends Service {
 
 	public Geonames() { 
 		// TODO Auto-generated constructor stub
+		this.started_on=System.currentTimeMillis()/1000;
+		this.name="Geonames";
+		this.base_uri="http://sws.geonames.org/";
 	}
 	
 	public ArrayList<Annotation> run(String input, String language) throws Exception
 	{
 		
 		ArrayList<Annotation> annotations=new ArrayList<Annotation>();
+		
+		if(input.isEmpty())
+			return annotations;
+		
+		if(!Character.isUpperCase(input.charAt(0)))
+			return annotations;
 		
 		String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
 				+ "assets"+System.getProperty("file.separator");
