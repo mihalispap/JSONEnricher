@@ -25,13 +25,13 @@ public class SubjectEnricher extends Enricher {
 		FremeAGROVOC service_f = new FremeAGROVOC();
 		services.add(service_f); 
 		AgroPortalSubject service_ap = new AgroPortalSubject();
-		//services.add(service_ap); 
+		services.add(service_ap); 
 		AKSPARQL_GACS service_gc = new AKSPARQL_GACS();
 		services.add(service_gc); 
 		/*TODO:
 		 * 		add only afetr cleansing is performed!*/
 		AKSPARQL_GrapeVarieties service_gv = new AKSPARQL_GrapeVarieties();
-		//services.add(service_gv); 
+		services.add(service_gv); 
 	}
 
 	public ArrayList<Annotation> enrich(String jsonfile)

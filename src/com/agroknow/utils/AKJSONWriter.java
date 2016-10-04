@@ -131,6 +131,8 @@ public class AKJSONWriter
 			return "publisher";
 		if(key.equals("dct:medium"))
 			return "medium";
+		if(key.equals("dct:extent"))
+			return "extent";
 		
 		return "field:"+key;
 	}
