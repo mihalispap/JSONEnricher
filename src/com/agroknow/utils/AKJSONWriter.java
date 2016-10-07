@@ -61,9 +61,11 @@ public class AKJSONWriter
 			bibo:authorList
 			bibo:issue
 			bibo:abstract
-		 * 
-		 * */
-		if(key.equals("dct:language"))
+			
+			
+			!!PREV (readable) version!!
+			
+			if(key.equals("dct:language"))
 			return "language";
 		if(key.equals("dct:title"))
 			return "title";
@@ -127,6 +129,81 @@ public class AKJSONWriter
 			return "doi";
 		if(key.equals("bibo:uri"))
 			return "url";
+		if(key.equals("dct:publisher"))
+			return "publisher";
+		if(key.equals("dct:medium"))
+			return "medium";
+		if(key.equals("dct:extent"))
+			return "extent";
+		
+		return "field:"+key;
+			
+		 * 
+		 * */
+		if(key.equals("dct:language"))
+			return "language";
+		if(key.equals("dct:title"))
+			return "title";
+		if(key.equals("bibo:pageStart"))
+			return "pageStart";
+		if(key.equals("dc:subject"))
+			return "subject";
+		if(key.equals("bibo:pageEnd"))
+			return "pageEnd";
+		if(key.equals("dct:type"))
+			return "type";
+		if(key.equals("rdf:about"))
+			return "about";
+		if(key.equals("dct:identifier"))
+			return "identifier";
+		if(key.equals("dct:source"))
+			return "source";
+		if(key.equals("dct:isPartOf"))
+			return "isPartOf";
+		if(key.equals("dct:issued"))
+			return "issued";
+		if(key.equals("dct:dateSubmitted"))
+			return "dateSubmitted";
+		if(key.equals("dct:creator"))
+			return "creator";
+		if(key.equals("dct:description"))
+			return "description";
+		if(key.equals("dct:subject"))
+			return "subject";
+		if(key.equals("bibo:authorList"))
+			return "authorList";
+		if(key.equals("bibo:issue"))
+			return "issue";
+		if(key.equals("bibo:abstract"))
+			return "abstract";
+		if(key.equals("bibo:Journal"))
+			return "Journal";
+		if(key.equals("foaf:name"))
+			return "name";
+		if(key.equals("foaf:Person"))
+			return "Person";
+		if(key.equals("bibo:ISSN"))
+			return "ISSN";
+		if(key.equals("bibo:ISBN"))
+			return "ISBN";
+		if(key.equals("bibo:issn"))
+			return "issn";
+		if(key.equals("bibo:isbn"))
+			return "isbn";
+		if(key.equals("content"))
+			return "value";
+		if(key.equals("xml:lang"))
+			return "language";
+		if(key.equals("rdf:resource"))
+			return "resource";
+		if(key.equals("bibo:volume"))
+			return "volume";
+		if(key.equals("foaf:Organization"))
+			return "Organization";
+		if(key.equals("bibo:doi"))
+			return "doi";
+		if(key.equals("bibo:uri"))
+			return "uri";
 		if(key.equals("dct:publisher"))
 			return "publisher";
 		if(key.equals("dct:medium"))
@@ -227,7 +304,7 @@ public class AKJSONWriter
 		if(!key.equals("plain"))
 			to_write+="\""+mapped+"\":";
 		
-		else if(key.equals("plain") && this.combo_flag==true)
+		if(/*key.equals("plain") && */this.combo_flag==true)
 			to_write+="{\"value\":";
 			
 		try
@@ -248,7 +325,7 @@ public class AKJSONWriter
 			to_write+="\""+value.toString().replace("\"","\\\"")+"\"";
 		}
 		
-		if(key.equals("plain") && this.combo_flag==true)
+		if(/*key.equals("plain") && */this.combo_flag==true)
 			to_write+="}";
 		
 		/*if(value instanceof Number)
@@ -276,7 +353,7 @@ public class AKJSONWriter
 			System.out.println(annotations.get(i));
 		System.out.println("---");*/
     	
-		to_write="{\"enriched\":{\n\t\"arn\":\""+annotations.get(0).arn+"\",\n\t";
+		to_write="{\"enriched\":{\n\t\"identifier\":\""+annotations.get(0).arn+"\",\n\t";
 		for(int i=0;i<annotations.size();i++)
 		{
 			String jsonid=annotations.get(i).jsonid;
@@ -387,9 +464,15 @@ public class AKJSONWriter
         	json_a.add(((JSONObject)json.get("rdf:RDF")).get("bibo:Article"));
         }
         
+        Utilities utils = new Utilities();
+        
         for(int i=0;i<json_a.size();i++)
         {   
         	String id=((JSONObject)json_a.get(i)).get("dct:identifier").toString();
+        	
+        	if(!utils.isStevia(id))
+        		continue;
+        	
         	PrintWriter writer = new PrintWriter(output_folder+File.separator+
     				id+".resource.json", "UTF-8");
         	
