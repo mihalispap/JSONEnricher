@@ -470,8 +470,8 @@ public class AKJSONWriter
         {   
         	String id=((JSONObject)json_a.get(i)).get("dct:identifier").toString();
         	
-        	if(!utils.isStevia(id))
-        		continue;
+        	//if(!utils.isStevia(id))
+        	//	continue;
         	
         	PrintWriter writer = new PrintWriter(output_folder+File.separator+
     				id+".resource.json", "UTF-8");

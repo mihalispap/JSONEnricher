@@ -212,6 +212,7 @@ public abstract class Enricher
 		}
 		catch(java.lang.IllegalStateException e)
 		{
+			this.language="en";
 			//e.printStackTrace();
 		}
 	}

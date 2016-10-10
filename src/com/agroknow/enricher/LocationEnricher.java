@@ -59,7 +59,7 @@ public class LocationEnricher extends Enricher {
             	//System.out.println(((JSONObject)json_a.get(i)).get("dct:identifier"));
 
             	int counter=annotations.size();
-            	String arn=((JSONObject)json_a.get(i)).get("arn").toString();
+            	String arn=((JSONObject)json_a.get(i)).get("identifier").toString();
 
             	try
             	{

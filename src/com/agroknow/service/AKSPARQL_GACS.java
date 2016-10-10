@@ -47,7 +47,7 @@ public class AKSPARQL_GACS extends Service {
 				b.replace(toCheck.lastIndexOf(" "), toCheck.lastIndexOf(" ") + 1, "" );
 				toCheck = b.toString();
 			}
-			
+			String queryString ="";
 			try
 			{
 				String dbaasURL = "http://lod.akstem.com";///repositories/agris";
@@ -61,14 +61,14 @@ public class AKSPARQL_GACS extends Service {
 						+ " { ?s skos:prefLabel ?label."
 						+ "FILTER (lcase(str(?label)) = \""+input+"\")  } "
 								+ "limit 1";*/
-				String queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
+				queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 						+ "select * "
 						+ "where "
 						+ " { ?s skos:prefLabel \""+input+"\"@"+language+". } "
 								+ "limit 1";
 				
 				//System.out.println("Will run query:"+queryString);
-				
+								
 				// Abstract representation of a remote repository accessible over HTTP
 		        HTTPRepository repository = new HTTPRepository("http://lod.akstem.com/repositories/gacs");
 		        
@@ -81,7 +81,8 @@ public class AKSPARQL_GACS extends Service {
 				TupleQueryResult result = tupleQuery.evaluate();
 		
 				if(!result.hasNext())
-				{
+				{				
+					
 					queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 							+ "select * "
 							+ "where "
@@ -118,6 +119,7 @@ public class AKSPARQL_GACS extends Service {
 			}
 			catch(java.lang.Exception e)
 			{
+				
 				e.printStackTrace();
 			}
 
