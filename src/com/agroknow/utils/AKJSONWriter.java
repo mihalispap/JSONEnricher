@@ -15,6 +15,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -22,6 +24,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.jsoup.Jsoup;
 
 import com.google.common.base.Optional;
 import com.optimaize.langdetect.LanguageDetector;
@@ -141,80 +144,118 @@ public class AKJSONWriter
 		 * 
 		 * */
 		if(key.equals("dct:language"))
-			return "language";
+			return "dct:language";
+		
 		if(key.equals("dct:title"))
-			return "title";
+			return "dct:title";
+		
 		if(key.equals("bibo:pageStart"))
-			return "pageStart";
+			return "bibo:pageStart";
+		
 		if(key.equals("dc:subject"))
-			return "subject";
+			return "dc:subject";
+		
 		if(key.equals("bibo:pageEnd"))
-			return "pageEnd";
+			return "bibo:pageEnd";
+		
 		if(key.equals("dct:type"))
-			return "type";
+			return "dct:type";
+		
 		if(key.equals("rdf:about"))
-			return "about";
+			return "rdf:about";
+		
 		if(key.equals("dct:identifier"))
-			return "identifier";
+			return "dct:identifier";
+		
 		if(key.equals("dct:source"))
-			return "source";
+			return "dct:source";
+		
 		if(key.equals("dct:isPartOf"))
-			return "isPartOf";
+			return "dct:isPartOf";
+		
 		if(key.equals("dct:issued"))
-			return "issued";
+			return "dct:issued";
+		
 		if(key.equals("dct:dateSubmitted"))
-			return "dateSubmitted";
+			return "dct:dateSubmitted";
+		
 		if(key.equals("dct:creator"))
-			return "creator";
+			return "dct:creator";
+		
 		if(key.equals("dct:description"))
-			return "description";
+			return "dct:description";
+		
 		if(key.equals("dct:subject"))
-			return "subject";
+			return "dct:subject";
+		
 		if(key.equals("bibo:authorList"))
-			return "authorList";
+			return "bibo:authorList";
+		
 		if(key.equals("bibo:issue"))
-			return "issue";
+			return "bibo:issue";
+		
 		if(key.equals("bibo:abstract"))
-			return "abstract";
+			return "bibo:abstract";
+		
 		if(key.equals("bibo:Journal"))
-			return "Journal";
+			return "bibo:Journal";
+		
 		if(key.equals("foaf:name"))
-			return "name";
+			return "foaf:name";
+		
 		if(key.equals("foaf:Person"))
-			return "Person";
+			return "foaf:Person";
+		
 		if(key.equals("bibo:ISSN"))
-			return "ISSN";
+			return "bibo:ISSN";
+		
 		if(key.equals("bibo:ISBN"))
-			return "ISBN";
+			return "bibo:ISBN";
+		
 		if(key.equals("bibo:issn"))
-			return "issn";
+			return "bibo:issn";
+		
 		if(key.equals("bibo:isbn"))
-			return "isbn";
+			return "bibo:isbn";
+		
 		if(key.equals("content"))
 			return "value";
+		
 		if(key.equals("xml:lang"))
-			return "language";
+			return "xml:lang";
+		
 		if(key.equals("rdf:resource"))
-			return "resource";
+			return "rdf:resource";
+		
 		if(key.equals("bibo:volume"))
-			return "volume";
+			return "bibo:volume";
+		
 		if(key.equals("foaf:Organization"))
-			return "Organization";
+			return "foaf:Organization";
+		
 		if(key.equals("bibo:doi"))
-			return "doi";
+			return "bibo:doi";
+		
 		if(key.equals("bibo:uri"))
-			return "uri";
+			return "bibo:uri";
+		
 		if(key.equals("dct:publisher"))
-			return "publisher";
+			return "dct:publisher";
+		
 		if(key.equals("dct:medium"))
-			return "medium";
+			return "dct:medium";
+		
 		if(key.equals("dct:extent"))
-			return "extent";
+			return "dct:extent";
 		
 		return "field:"+key;
 	}
 	
 	public boolean combo_flag=false;
+	
+	public static String html2text(String html) {
+	    return Jsoup.parse(html).text();
+	}
 	
 	public boolean isSpecialCase(String key)
 	{
@@ -270,16 +311,16 @@ public class AKJSONWriter
 		String mapped=map(key);
 		
 		if(!key.equals("plain"))
-			to_write+="\""+mapped+"\":\n\t\t{";
+			to_write+="\""+mapped+"\":{";
 		else
-			to_write+="{\n\t\t";
+			to_write+="{";
 		
 			Set<String> elements = json.keySet();		        	
 		    java.util.Iterator<String> it=elements.iterator();
 		    while (it.hasNext()) 
 		    {
 		    	String key_inner=it.next();
-		        //System.out.println(key+"|"+objectInArray.get(key).getClass());
+		        //System.out.println(key+"|"+json.get(key_inner).getClass());
 		      		
 		    	if(json.get(key_inner).getClass().equals(org.json.simple.JSONArray.class))
 		    	{
@@ -304,9 +345,12 @@ public class AKJSONWriter
 		if(!key.equals("plain"))
 			to_write+="\""+mapped+"\":";
 		
-		if(/*key.equals("plain") && */this.combo_flag==true)
+		if(this.combo_flag==true)
+		{
+			//System.out.println("--------------\ntowrite was:"+to_write+"");
 			to_write+="{\"value\":";
-			
+			//System.out.println("towrite iss:"+to_write+"\n-------------------");
+		}
 		try
 		{
 			float v = Float.parseFloat(value.toString());
@@ -322,18 +366,40 @@ public class AKJSONWriter
 		}
 		catch(NumberFormatException e)
 		{
-			to_write+="\""+value.toString().replace("\"","\\\"")+"\"";
+			to_write+="\""+this.html2text(value.toString().replace("\"","\\\""))+"\"";
 		}
 		
-		if(/*key.equals("plain") && */this.combo_flag==true)
+		if(this.combo_flag==true)
+		{
 			to_write+="}";
-		
+			//this.combo_flag=false;
+		}
 		/*if(value instanceof Number)
 			to_write+=value;
 		else
 			to_write+="\""+value+"\"";*/
 				
 		to_write+=",\n\t";
+		
+		//to_write=to_write.replace("{{\"value\":", "{\"value\":");
+		//to_write=to_write.replace("\"xml:lang\":{\"value\":", "\"xml:lang\":");
+
+		String regex="\\{\"value\":\\{\"value\":\"(.*?)\"\\}";
+		
+		Pattern p = Pattern.compile(regex);
+	      
+	     // get a matcher object
+	     Matcher m = p.matcher(to_write); 
+	     to_write = m.replaceAll("{\"value\":\"$1\"");
+		
+	     regex="\"xml:lang\":\\{\"value\":\"(.*?)\"\\}";
+	     p = Pattern.compile(regex);
+	     m = p.matcher(to_write);
+	     to_write = m.replaceAll("\"xml:lang\":\"$1\"");
+		//to_write = to_write.replaceAll("{\"value\":{\"value\":\"(.*?)\"}","$1");
+		
+		
+		
 	}
 	
 	public void writeAnnotations(ArrayList<Annotation> annotations, String output_folder) throws ParseException, FileNotFoundException, UnsupportedEncodingException
@@ -496,7 +562,7 @@ public class AKJSONWriter
         		
         		this.isPossibleCombo(key);
         		
-        	    //System.out.println(key+"|"+objectInArray.get(key).getClass());
+        	    //System.out.println(key+"|"+objectInArray.get(key).getClass()+" OUTER");
         		//System.out.println(key);
         		if(objectInArray.get(key).getClass().equals(org.json.simple.JSONArray.class))
         		{
