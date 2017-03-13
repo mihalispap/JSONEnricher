@@ -89,14 +89,14 @@ public class TypeEnricher extends Enricher {
             	//System.out.println(((JSONObject)json_a.get(i)).get("dct:identifier"));
 
             	int counter=annotations.size();
-            	String arn=((JSONObject)json_a.get(i)).get("identifier").toString();
+            	String arn=((JSONObject)json_a.get(i)).get("dct:identifier").toString();
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("type").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("dct:type").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("type");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("dct:type");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
@@ -106,7 +106,7 @@ public class TypeEnricher extends Enricher {
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("type").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("dct:type").toString()));
 					}
             	}
             	catch(Exception e) {

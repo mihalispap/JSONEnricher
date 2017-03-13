@@ -24,14 +24,14 @@ public class SubjectEnricher extends Enricher {
 		services.add(service);
 		FremeAGROVOC service_f = new FremeAGROVOC();
 		services.add(service_f); 
-		AgroPortalSubject service_ap = new AgroPortalSubject();
-		services.add(service_ap); 
+		//AgroPortalSubject service_ap = new AgroPortalSubject();
+		//services.add(service_ap); 
 		AKSPARQL_GACS service_gc = new AKSPARQL_GACS();
 		services.add(service_gc); 
 		/*TODO:
 		 * 		add only afetr cleansing is performed!*/
-		AKSPARQL_GrapeVarieties service_gv = new AKSPARQL_GrapeVarieties();
-		services.add(service_gv); 
+		//AKSPARQL_GrapeVarieties service_gv = new AKSPARQL_GrapeVarieties();
+		//services.add(service_gv); 
 	}
 
 	public ArrayList<Annotation> enrich(String jsonfile)
@@ -66,14 +66,14 @@ public class SubjectEnricher extends Enricher {
             	//System.out.println(((JSONObject)json_a.get(i)).get("dct:identifier"));
 
             	int counter=annotations.size();
-            	String arn=((JSONObject)json_a.get(i)).get("identifier").toString();
+            	String arn=((JSONObject)json_a.get(i)).get("dct:identifier").toString();
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("subject").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("dc:subject").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("subject");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("dc:subject");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
@@ -81,15 +81,15 @@ public class SubjectEnricher extends Enricher {
 									.get("value").toString()));
 						}
 					}
-					else if(((JSONObject)json_a.get(i)).get("subject").getClass()
+					else if(((JSONObject)json_a.get(i)).get("dc:subject").getClass()
 	            			.equals(org.json.simple.JSONObject.class))
 					{
-						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("subject"))
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("dc:subject"))
 								.get("value").toString()));			
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("subject").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("dc:subject").toString()));
 					}
             	}
             	catch(Exception e) {
@@ -97,10 +97,10 @@ public class SubjectEnricher extends Enricher {
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("title").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("dct:title").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("title");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("dct:title");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
@@ -108,15 +108,15 @@ public class SubjectEnricher extends Enricher {
 									.get("value").toString()));
 						}
 					}
-					else if(((JSONObject)json_a.get(i)).get("title").getClass()
+					else if(((JSONObject)json_a.get(i)).get("dct:title").getClass()
 	            			.equals(org.json.simple.JSONObject.class))
 					{
-						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("title"))
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("dct:title"))
 								.get("value").toString()));			
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("title").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("dct:title").toString()));
 					}
             	}
             	catch(Exception e) {
@@ -124,10 +124,10 @@ public class SubjectEnricher extends Enricher {
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("abstract").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("bibo:abstract").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("abstract");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("bibo:abstract");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
@@ -135,15 +135,15 @@ public class SubjectEnricher extends Enricher {
 									.get("value").toString()));
 						}
 					}
-					else if(((JSONObject)json_a.get(i)).get("abstract").getClass()
+					else if(((JSONObject)json_a.get(i)).get("bibo:abstract").getClass()
 	            			.equals(org.json.simple.JSONObject.class))
 					{
-						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("abstract"))
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("bibo:abstract"))
 								.get("value").toString()));			
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("abstract").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("bibo:abstract").toString()));
 					}
             	}
             	catch(Exception e) {

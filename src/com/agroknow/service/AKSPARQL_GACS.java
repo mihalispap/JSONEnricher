@@ -64,8 +64,9 @@ public class AKSPARQL_GACS extends Service {
 				queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 						+ "select * "
 						+ "where "
-						+ " { ?s skos:prefLabel \""+input+"\"@"+language+". } "
-								+ "limit 1";
+						+ " { ?s skos:prefLabel \""+input.toLowerCase()+"\"@"+language+"."
+								+ "?s skos:exactMatch ?o. } "
+								+ " ";
 				
 				//System.out.println("Will run query:"+queryString);
 								
@@ -86,8 +87,9 @@ public class AKSPARQL_GACS extends Service {
 					queryString = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 							+ "select * "
 							+ "where "
-							+ " { ?s skos:prefLabel \""+input.toLowerCase()+"\"@"+language+". } "
-									+ "limit 1";
+							+ " { ?s skos:prefLabel \""+input.toLowerCase()+"\"@"+language+"."
+									+ "?s skos:exactMatch ?o. } "
+									+ " ";
 					
 			        tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL,
 							queryString);
@@ -102,8 +104,15 @@ public class AKSPARQL_GACS extends Service {
 					Annotation annotation=new Annotation();
 					annotation.value=toCheck;
 					annotation.score=1.0f;
-					annotation.uri=bindingSet.getBinding("s").getValue().stringValue();
-					annotation.vocabulary="gacs";
+					annotation.uri=bindingSet.getBinding("o").getValue().stringValue();
+					
+					if(annotation.uri.contains("agrisemantics.org/gacs"))
+						annotation.vocabulary="gacs";
+					else if(annotation.uri.contains("nal.usda.gov/nalt"))
+						annotation.vocabulary="nalt";
+					else if(annotation.uri.contains("cabi.org/cabt"))
+						annotation.vocabulary="cabt";
+					
 					
 					annotations.add(annotation);
 					

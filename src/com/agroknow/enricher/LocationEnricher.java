@@ -59,14 +59,14 @@ public class LocationEnricher extends Enricher {
             	//System.out.println(((JSONObject)json_a.get(i)).get("dct:identifier"));
 
             	int counter=annotations.size();
-            	String arn=((JSONObject)json_a.get(i)).get("identifier").toString();
+            	String arn=((JSONObject)json_a.get(i)).get("dct:identifier").toString();
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("subject").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("dc:subject").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("subject");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("dc:subject");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
@@ -74,15 +74,15 @@ public class LocationEnricher extends Enricher {
 									.get("value").toString()));
 						}
 					}
-					else if(((JSONObject)json_a.get(i)).get("subject").getClass()
+					else if(((JSONObject)json_a.get(i)).get("dc:subject").getClass()
 	            			.equals(org.json.simple.JSONObject.class))
 					{
-						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("subject"))
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("dc:subject"))
 								.get("value").toString()));			
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("subject").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("dc:subject").toString()));
 					}
             	}
             	catch(Exception e) {
@@ -90,10 +90,10 @@ public class LocationEnricher extends Enricher {
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("title").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("dct:title").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("title");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("dct:title");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
@@ -101,15 +101,15 @@ public class LocationEnricher extends Enricher {
 									.get("value").toString()));
 						}
 					}
-					else if(((JSONObject)json_a.get(i)).get("title").getClass()
+					else if(((JSONObject)json_a.get(i)).get("dct:title").getClass()
 	            			.equals(org.json.simple.JSONObject.class))
 					{
-						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("title"))
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("dct:title"))
 								.get("value").toString()));			
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("title").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("dct:title").toString()));
 					}
             	}
             	catch(Exception e) {
@@ -117,10 +117,10 @@ public class LocationEnricher extends Enricher {
 
             	try
             	{
-	            	if(((JSONObject)json_a.get(i)).get("abstract").getClass()
+	            	if(((JSONObject)json_a.get(i)).get("bibo:abstract").getClass()
 	            			.equals(org.json.simple.JSONArray.class))
 					{
-	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("abstract");
+	            		JSONArray json_array = (JSONArray)((JSONObject)json_a.get(i)).get("bibo:abstract");
 	            		
 						for(int j=0;j<json_array.size();j++)
 						{
@@ -128,15 +128,15 @@ public class LocationEnricher extends Enricher {
 									.get("value").toString()));
 						}
 					}
-					else if(((JSONObject)json_a.get(i)).get("abstract").getClass()
+					else if(((JSONObject)json_a.get(i)).get("bibo:abstract").getClass()
 	            			.equals(org.json.simple.JSONObject.class))
 					{
-						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("abstract"))
+						annotations.addAll(check(((JSONObject)((JSONObject)json_a.get(i)).get("bibo:abstract"))
 								.get("value").toString()));			
 					}
 					else
 					{
-						annotations.addAll(check(((JSONObject)json_a.get(i)).get("abstract").toString()));
+						annotations.addAll(check(((JSONObject)json_a.get(i)).get("bibo:abstract").toString()));
 					}
             	}
             	catch(Exception e) {
